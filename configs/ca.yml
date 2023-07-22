@@ -1,0 +1,71 @@
+SYS:
+  OUTPUT_DIR: 'logs/test1'
+  OUTPUT_DIR_SET: 'd'
+  DEVICE: 'cuda'
+  DEVICE_IDS: [0,1]
+  REQUEST_MEM: 22000
+  REQUEST_NUM: 1
+
+INPUT:
+  SIZE_TRAIN: (256, 128)  # (256, 128) (384, 128) (128, 64) (192, 96) (320,160)
+  SIZE_TEST: (256, 128)
+  REA: True
+  FLIP: True
+  MISS_VALUE: -70
+
+DATASETS:
+  NAMES: 'duke'  # msmt cuhk03_d cuhk03_l market duke
+  CLUSTER_K: -1
+
+MODEL:
+  NAME: 'CA' # AGW CA
+  BACKBONE_NAME: 'resnet50_nl_resnet50' 
+  LAST_STRIDE: 1
+  NECK: 'bnneck'
+  NECK_FEAT: 'after'
+  GEM_POOL: True
+  PRETRAIN_CHOICE: 'imagenet' #  'imagenet' or 'self'
+  SELF_PRETRAIN_MODEL: 'kr/kr1/CA/logs/market_CA_resnet50_nl_resnet50-60/best_model.pth.tar'
+  SAVE: True
+  RESCA: False
+  FDCA_MODE: 'p_p_p_p_p'  # 'p' or 'c'
+  FDCA_NUM: (0,1,1,1,1)
+  CA_BIAS: False
+
+LOSS:
+  LOSS_TYPE: 'xent_htri_cent' # 'xent_htri_cent_cons'
+  LABELSMOOTH: True
+  WEIGHT_REGULARIZED_TRIPLET: True
+  ID_LOSS_WEIGHT: 1
+  TRI_LOSS_WEIGHT: 1
+  CENTER_LOSS_WEIGHT: 0.0005
+  CONSIST_WEIGHT: 0.001
+  POSE_WEIGHT: 0.6
+  DIST_TYPE: 'euclidean'  # 'euclidean'  'cosine'
+
+OPTIM:
+  OPTIMIZER_NAME: 'Adam'
+  BASE_LR: 0.0004
+  BIAS_LR_FACTOR: 1
+  WEIGHT_DECAY: 0.0005
+  WEIGHT_DECAY_BIAS: 0.0005
+  MOMENTUM: 0.9
+
+SCHEDULER:
+  STEPS: [15, 40, 70, 120]  # [15, 40, 70, 100]
+  GAMMA: 0.2
+  WARMUP_FACTOR: 0.1
+  WARMUP_ITERS: 5
+  WARMUP_METHOD: 'linear'
+
+TRAIN:
+  MAX_EPOCHS: 160
+  BATCH_SIZE: 64
+  PRINT_FREQ: 20
+
+TEST:
+  BATCH_SIZE: 64
+  VALID_FREQ: 5
+  START_EPOCH: 30
+  RE_RANKING: False
+
